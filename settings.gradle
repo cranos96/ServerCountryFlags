@@ -43,5 +43,5 @@ rootProject.name = 'ServerCountryFlags'
 include 'Common'
 include 'Forge'
 include 'Fabric'
-include 'NeoForged'
+include 'NeoForge'
 
