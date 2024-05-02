@@ -6,6 +6,7 @@ import me.khajiitos.servercountryflags.common.config.Config;
 import me.khajiitos.servercountryflags.common.util.APIResponse;
 import me.khajiitos.servercountryflags.common.util.FlagPosition;
 import me.khajiitos.servercountryflags.common.util.FlagRenderInfo;
+import me.khajiitos.servercountryflags.common.util.TooltipUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.screens.multiplayer.ServerSelectionList;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(ServerSelectionList.OnlineServerEntry.class)
 public class OnlineServerEntryMixin {
@@ -68,7 +71,7 @@ public class OnlineServerEntryMixin {
             int serverNameHeight = 8;
 
             if (mouseX >= serverNameStartX && mouseX <= serverNameStartX + serverNameWidth && mouseY >= serverNameStartY && mouseY <= serverNameStartY + serverNameHeight) {
-                screen.setToolTip(flagRenderInfo.tooltip());
+                screen.setTooltipForNextRenderPass(flagRenderInfo.tooltip());
             }
 
             // TODO: maybe render the flag in the future
@@ -115,15 +118,13 @@ public class OnlineServerEntryMixin {
         RenderSystem.disableBlend();
 
         if (mouseX >= startingX && mouseX <= startingX + width && mouseY >= startingY && mouseY <= startingY + height) {
-            screen.setToolTip(flagRenderInfo.tooltip());
+            screen.setTooltipForNextRenderPass(flagRenderInfo.tooltip());
         }
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen;setToolTip(Ljava/util/List;)V", ordinal = 0, shift = At.Shift.AFTER), method = "render")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen;setTooltipForNextRenderPass(Lnet/minecraft/network/chat/Component;)V", ordinal = 0, shift = At.Shift.AFTER), method = "render")
     public void onSetTooltip(GuiGraphics guiGraphics, int $$1, int $$2, int $$3, int $$4, int $$5, int $$6, int $$7, boolean $$8, float $$9, CallbackInfo ci) {
         if (Config.cfg.flagPosition == FlagPosition.TOOLTIP_PING) {
-            JoinMultiplayerScreenAccessor accessor = (JoinMultiplayerScreenAccessor) screen;
-
             APIResponse apiResponse = ServerCountryFlags.servers.get(serverData.ip);
             FlagRenderInfo flagRenderInfo = ServerCountryFlags.getFlagRenderInfo(apiResponse);
 
@@ -131,10 +132,10 @@ public class OnlineServerEntryMixin {
                 return;
             }
 
-            List<Component> newTooltip = new ArrayList<>(accessor.getToolTip());
-            newTooltip.add(Component.literal(" "));
+            List<FormattedCharSequence> newTooltip = new ArrayList<>(TooltipUtils.getTooltipOfScreenOrEmpty(screen));
+            newTooltip.add(Component.literal(" ").getVisualOrderText());
             newTooltip.addAll(flagRenderInfo.tooltip());
-            screen.setToolTip(newTooltip);
+            screen.setTooltipForNextRenderPass(newTooltip);
         }
     }
 }

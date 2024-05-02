@@ -4,20 +4,20 @@ import me.khajiitos.servercountryflags.common.ServerCountryFlags;
 import me.khajiitos.servercountryflags.common.config.ClothConfigCheck;
 import me.khajiitos.servercountryflags.common.config.ClothConfigScreenMaker;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.ConfigScreenHandler;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(ServerCountryFlags.MOD_ID)
 public class ServerCountryFlagsNeoforged {
     public ServerCountryFlagsNeoforged() {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+        if (FMLLoader.getDist() == Dist.CLIENT) {
             ServerCountryFlags.init();
 
             if (ClothConfigCheck.isInstalled()) {
-                ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(ClothConfigScreenMaker::create));
+                ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> ClothConfigScreenMaker::create);
             }
-        });
+        }
     }
 }

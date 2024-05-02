@@ -28,6 +28,8 @@ import java.util.List;
 @Pseudo
 @Mixin(ServerBrowserList.BrowsedEntry.class)
 public class BrowsedEntryMixin {
+    // TODO: uncomment once Server Browser is available for 1.20.6
+    /*
     @Shadow(remap = false)
     private ServerData serverData;
 
@@ -149,5 +151,5 @@ public class BrowsedEntryMixin {
             newTooltip.addAll(flagRenderInfo.tooltip());
             screen.setToolTip(newTooltip);
         }
-    }
+    }*/
 }

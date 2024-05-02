@@ -14,19 +14,12 @@ displayName = "Server Country Flags"
 authors = "Khajiitos"
 displayURL="https://github.com/Khajiitos/ServerCountryFlags"
 description = '''Shows the flag of where a server is located.'''
-updateJSONURL = "https://updates.khajiitos.fun/server-country-flags/updates-forge.json"
+updateJSONURL = "https://updates.khajiitos.fun/server-country-flags/updates-neoforge.json"
 displayTest = "IGNORE_ALL_VERSION"
 
 [[dependencies.servercountryflags]]
 modId = "neoforge"
-mandatory = true
+type = "required"
 versionRange = "${neo_version_range}"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.servercountryflags]]
-modId = "minecraft"
-mandatory = true
-versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"

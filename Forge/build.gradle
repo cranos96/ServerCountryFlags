@@ -17,8 +17,8 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 base {
     archivesName = mod_id + "-" + mod_version + "-" + minecraft_version_group + "-FORGE"
@@ -65,7 +65,9 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}")
+    //implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}")
+    // TODO: using NeoForge version as compileOnly until a Forge version is released
+    compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     implementation fg.deobf("curse.maven:server-browser-825617:${server_browser_artifact_id_forge}")
 
     implementation project(':Common')
@@ -112,7 +114,7 @@ tasks.withType(Javadoc).configureEach {
 
 // Ideally this project would use Gradle from the root project
 tasks.register('wrapper', Wrapper) {
-    gradleVersion = '8.1.1'
+    gradleVersion = '8.7'
 }
 
 // Register dummy ideaSyncTask so that Gradle doesn't complain

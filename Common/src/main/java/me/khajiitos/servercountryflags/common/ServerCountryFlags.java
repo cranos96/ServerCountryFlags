@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,20 +201,20 @@ public class ServerCountryFlags {
 	public static FlagRenderInfo getFlagRenderInfo(APIResponse apiResponse) {
 		String countryCode;
 		double aspectRatio;
-		List<Component> tooltip = new ArrayList<>();
+		List<FormattedCharSequence> tooltip = new ArrayList<>();
 
 		if (apiResponse == null || apiResponse.unknown()) {
 			if (!Config.cfg.displayUnknownFlag) {
 				return null;
 			}
-			tooltip.add(Component.translatable("servercountryflags.locationInfo.unknown"));
+			tooltip.add(Component.translatable("servercountryflags.locationInfo.unknown").getVisualOrderText());
 			countryCode = "unknown";
 			aspectRatio = 1.5;
 		} else if (apiResponse.cooldown()) {
 			if (!Config.cfg.displayCooldownFlag) {
 				return null;
 			}
-			tooltip.add(Component.translatable("servercountryflags.locationInfo.cooldown"));
+			tooltip.add(Component.translatable("servercountryflags.locationInfo.cooldown").getVisualOrderText());
 			countryCode = "timeout";
 			aspectRatio = 1.5;
 		} else {
@@ -235,16 +236,16 @@ public class ServerCountryFlags {
 				}
 			}
 
-			tooltip.add(Component.literal((Config.cfg.showDistrict && !locationInfo.districtName.equals("") ? (locationInfo.districtName + ", ") : "") + locationInfo.cityName + ", " + locationInfo.countryName));
+			tooltip.add(Component.literal((Config.cfg.showDistrict && !locationInfo.districtName.isEmpty() ? (locationInfo.districtName + ", ") : "") + locationInfo.cityName + ", " + locationInfo.countryName).getVisualOrderText());
 
-			if (Config.cfg.showISP && !locationInfo.ispName.equals("")) {
-				tooltip.add(Component.translatable("servercountryflags.locationInfo.isp", locationInfo.ispName));
+			if (Config.cfg.showISP && !locationInfo.ispName.isEmpty()) {
+				tooltip.add(Component.translatable("servercountryflags.locationInfo.isp", locationInfo.ispName).getVisualOrderText());
 			}
 
 			if (Config.cfg.showDistance) {
 				double distanceFromLocal = locationInfo.getDistanceFromLocal(Config.cfg.useKm);
 				if (distanceFromLocal != -1.0) {
-					tooltip.add(Component.translatable("servercountryflags.locationInfo.distance", (int)distanceFromLocal, Component.translatable(Config.cfg.useKm ? "servercountryflags.locationInfo.km" : "servercountryflags.locationInfo.mi")).withStyle(ChatFormatting.ITALIC));
+					tooltip.add(Component.translatable("servercountryflags.locationInfo.distance", (int)distanceFromLocal, Component.translatable(Config.cfg.useKm ? "servercountryflags.locationInfo.km" : "servercountryflags.locationInfo.mi")).withStyle(ChatFormatting.ITALIC).getVisualOrderText());
 				}
 			}
 		}
