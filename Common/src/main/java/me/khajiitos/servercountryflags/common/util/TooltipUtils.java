@@ -13,17 +13,25 @@ public class TooltipUtils {
         // TODO: find a way not to use Reflection
 
         try {
-            Field field = Screen.class.getDeclaredField("deferredTooltipRendering");
-            field.setAccessible(true);
-            Object deferredTooltipRendering = field.get(screen);
+            // Trying to find "DeferredTooltipRendering deferredTooltipRendering"
+            // Without having access to it
+            for (Field field : Screen.class.getDeclaredFields()) {
+                if (Record.class.isAssignableFrom(field.getType())) {
+                    for (Field innerField : field.getType().getDeclaredFields()) {
+                        if (innerField.getType() == List.class) {
+                            // Hopefully, "field" is "deferredTooltipRendering"
+                            // and "innerField" is "tooltip"
 
-            if (deferredTooltipRendering != null) {
-                Field tooltipField = deferredTooltipRendering.getClass().getDeclaredField("tooltip");
-                tooltipField.setAccessible(true);
-                return (List<FormattedCharSequence>) tooltipField.get(deferredTooltipRendering);
+                            field.setAccessible(true);
+                            innerField.setAccessible(true);
+
+                            Object deferredTooltipRendering = field.get(screen);
+                            return (List<FormattedCharSequence>) innerField.get(deferredTooltipRendering);
+                        }
+                    }
+                }
             }
-
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+        } catch (IllegalAccessException ignored) {}
 
         return null;
     }
